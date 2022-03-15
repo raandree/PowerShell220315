@@ -9,3 +9,27 @@
 - [vscode-icons](https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons)
 - [yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
   
+
+class Car
+{
+    [string]$Manufacturer
+    [string]$Model
+    [string]$Color
+    [int]$Speed
+    [bool]$IsConvertible
+   
+    [void] Accelerate([int]$km) {
+        $this.Speed += $km
+    }
+    
+    [void] Brake([int]$km) {
+        $this.Speed -= $km
+    } 
+}
+
+$car = New-Object Car
+$car.Manufacturer = 'VW'
+$car.Model = 'Golf'
+$car.Engine = '123'
+$car.Accelerate(50)
+$car
