@@ -217,3 +217,54 @@
     ```powershell
     Get-EventLog -LogName System -After (Get-Date).AddDays(-7) | Group-Object -Property EntryType
     ```
+
+- ### Two different ways of foreach
+
+    ```powershell
+    $chars = 'a', 'b', 'c'
+    $numbers = 1, 2, 3
+
+    $result = foreach ($char in $chars) {
+        if ($char -eq 'b') {
+            continue
+        }
+        foreach ($number in $numbers) {
+            "$char - $number"
+        }
+    }
+
+    return
+    $chars | ForEach-Object {
+        $temp = $_
+        $numbers | ForEach-Object {
+            "$temp - $_"
+        }
+    }
+
+    <#
+    Expected output:
+
+        a - 1
+        a - 2
+        ...
+        c - 2
+        c - 3
+    #>
+    ```
+
+- ### Array performance
+
+    Standard arrays in .net are immutable hence cannot be extended in length. When using the `+=` operator in PowerShell, the CLR is allocating a new piece of memory that is larger (length + 1) as the current array, copies all the content to the new array and adds the new then. This takes time and gets exponentially slower the more items you add.
+
+    The solution is to use a more 'intelligent' class like `System.Collections.ArrayList` or `System.Collections.Generic.List`. 
+
+    ```powershell
+    $a = @()                                                                          
+    Measure-Command { foreach ($i in (1..30000)) { $a += "Test $i" } }               
+
+    $a = New-Object System.Collections.ArrayList                                      
+    Measure-Command { foreach ($i in (1..30000)) { $a.Add("Test $i") | Out-Null } }
+    #this gets even faster when replacing the cmdlet call with a variable assignment or cast
+    Measure-Command { foreach ($i in (1..30000)) { $null = $a.Add("Test $i") } }
+    Measure-Command { foreach ($i in (1..30000)) { [void]$a.Add("Test $i") } }
+    ```
