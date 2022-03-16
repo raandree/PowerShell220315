@@ -268,3 +268,50 @@
     Measure-Command { foreach ($i in (1..30000)) { $null = $a.Add("Test $i") } }
     Measure-Command { foreach ($i in (1..30000)) { [void]$a.Add("Test $i") } }
     ```
+
+- ### SupportsShouldProcess and ConfirmImpact
+
+    ```powershell
+    function Remove-Something
+    {
+        [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+        param(
+            [Parameter(Mandatory)]
+            [string]$Something
+        )
+        
+        if ($PSCmdlet.ShouldProcess($Something, 'Remove')) {
+            Write-Host "Removed '$Something'" -ForegroundColor Red
+        }
+        else {
+            Write-Host "Nothing happened" -ForegroundColor Green
+        }
+    }
+
+    Remove-Something -Something fsdsdf -Confirm:$false
+    ```
+
+- ### PowerShell Remoting works in parallel
+
+    If you want `Invoke-Command` to perform the target machines one by one and not in parallel, set the `ThrottleLimit` to `1`.
+
+    ```powershell
+    1..10 | ForEach-Object {
+        Invoke-Command -ComputerName dscdc01 -ScriptBlock {
+            Get-Date
+        } -Credential $cred
+    }
+
+    $s = New-PSSession -ComputerName dscdc01 -Credential $cred
+    1..10 | ForEach-Object {
+        Invoke-Command -ScriptBlock {
+            Get-Date
+        } -Session $s
+    }
+    $s | Remove-PSSession
+
+    Invoke-Command -ComputerName $c.DnsHostName -ScriptBlock {
+        Start-Sleep -Seconds 5
+        Get-Date
+    } -ThrottleLimit 1
+    ```
