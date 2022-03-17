@@ -23,10 +23,13 @@
 - [vscode-icons](https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons)
 - [yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
 
+## DSC
 
+- Details about DSC are in the [DSC document](./DSC.md)
 
+## Debugging
 
-
+- The script for going through the debugging topic is [Debugging Demo.ps1](./Debugging%20Demo.ps1)
 
 ## Code Samples
 
