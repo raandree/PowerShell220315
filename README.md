@@ -315,3 +315,25 @@
         Get-Date
     } -ThrottleLimit 1
     ```
+
+- ### String formatting and sub-expressions
+
+    > For formatting options refer to [Standard numeric format strings](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings).
+
+    ```powershell
+    $a = 5
+
+    '$a = $a'
+    "$a = $a"
+    "`$a = $a"
+
+    $p = Get-Process -Id $PID
+
+    "My current process with the ID" + $p.ID + " consumes " + $([Math]::Round($p.WS / 1MB, 2)) + " MB of memory."
+
+    "My current process with the ID $($p.ID) consumes $([Math]::Round($p.WS / 1MB, 2)) MB of memory."
+
+    'My current process with the ID {0} consumes {1} MB of memory.' -f $p.Id, ($p.WS / 1MB)
+
+    'My current process with the ID {0} consumes {1:N2} MB of memory.' -f $p.Id, ($p.WS / 1MB)
+    ```
